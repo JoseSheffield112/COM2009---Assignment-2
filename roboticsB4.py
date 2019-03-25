@@ -42,13 +42,18 @@ def debug_printer(var_name, var_val):
     debug_print(var_val)
 
 
-def actuate(m_left, m_right, v, dv_left, dv_right):
+def actuate(m_left, m_right, v, dv):
     ''' Function to actuate motors 
     Takes 2 motors as inputs, v for base speed, dv for diff 
     returns nil
     '''
-    left = v-dv_left
-    right = v+dv_right
+
+    left = v-dv
+    right = v+dv
+
+   
+
+   
 
     debug_printer("Fed into motor left:", (left))
     debug_printer("Fed into right motor:", (right))
@@ -75,20 +80,18 @@ def get_response(kp, ki, kd, dt, cur_error, prev_error, integral):
 def hk_metric(l_dist, r_dist):
     return (l_dist-r_dist)
 
-def main_program(l_dist, r_dist, min_dist):
-    # If we're too close to left side, increase speed there
-    if ((l_dist<min_dist) and (r_distM>=min_dist)):
-        error_l = (min_dist-l_dist)# if broken use :(l_dist-min_dist) 
-        erro_r = -1*error_l
-    # If we're too close to right side, increase speed there
-    elif ((l_dist>=min_dist) and (r_dist<min_dist)):
-        error_r = (r_dist-min_dist)# if broken use :(min_dist-r_dist)
-        error_l = -1*error_r
-    # Otherwise go at constant speed
-    else:
-        error_l = error_r = 0
 
-    return(error_l, error_r)
+def theo_metric(l_dist, r_dist):
+    return ((l_dist+r_dist)/2)
+
+def theo_jose_hybrid_metric(l_dist, r_dist):
+    if l_dist > 2500:
+        return (r_dist / 2)
+    elif r_dist > 2500:
+        return (l_dist / 2)
+    else:
+        return theo_metric(l_dist, r_dist)
+
 
 def main():
     '''Main calling Function'''
@@ -100,23 +103,20 @@ def main():
     m_left = ev3.LargeMotor('outB')
     m_right = ev3.LargeMotor('outC')
 
-    motor = ev3.MediumMotor('outA')
-
     # Sensors
     us_left = ev3.UltrasonicSensor('in3')
     us_right = ev3.UltrasonicSensor('in2')
 
     # motor speed range
     max_speed = 100
-    base_speed = 90
+    base_speed = 80
 
     # Set distance
-    min_dist = 250
+    min_dist = 300
 
     # PID - Initialise
     integral = 0
-    last_error_left = 0
-    last_error_right = 0
+    last_error = 0
     ku = 8
     tu = 0.1
 
@@ -133,49 +133,40 @@ def main():
     # Control - Loop
     while True:
         time.sleep(sampling_rate)
-        #getting the left & right side values
-        left_value, right_value = us_left.value(), us_right.value()
+        error = hk_metric(us_left.value(), us_right.value())
+        #error_rate = theo_metric(us.left_value(), us.right_value())
+        #error_rate = jose_metric(us.left_value(), us.right_value())
 
         time_now = time.time()
         dt = time_now - time_then
         time_then = time_now
 
-        #If we're in a tight space, we use the maze runner metric
-        if ((left_value<min_dist) and (right_value<min_dist)):
-            error_left = error_right = hk_metric(left_value,right_value)
-        #Otherwise we use the open space metric
-        else:
-            error_left, error_right = main_program(left_value, right_value, min_dist)
-
         debug_printer("Error from Metric used:", error)
 
-        dv_left = get_response(kp, ki, kd, dt, error_left, last_error_left, integral)
-        dv_right = get_response(kp, ki, kd, dt, error_right, last_error_right, integral)
+        dv = get_response(kp, ki, kd, dt, error, last_error, integral)
+
+      
 
         # Overspeed stopper
-        if dv_left > max_speed - base_speed:
-            dv_left = max_speed - base_speed
-        elif dv_right > max_speed - base_speed:
-            dv_right = max_speed - base_speed
-        elif dv_left < base_speed-max_speed:
-            dv_left = base_speed - max_speed
-        elif dv_right < base_speed-max_speed:
-            dv_right = base_speed - max_speed
 
-        actuate(m_left, m_right, base_speed, dv_left, dv_right)
+        if dv + base_speed > max_speed:
+            dv = max_speed - base_speed
+        elif dv - base_speed < -max_speed:
+            dv = base_speed - max_speed
+
+       
+
+     
+
+        actuate(m_left, m_right, base_speed, dv)
+
+        
 
         # Copy previous error rate
-        last_error_left = error_left
-        last_error_right = error_right
+        last_error = error
+
+  
+
 
 if __name__ == '__main__':
 main()
-
-
-# Uses color sensor to measure ambient light percentage
-#def color_sensor(self):
-#    self._ensure_mode(self.MODE_COL_AMBIENT)
-#    return self.value(0)
-
-# to stop motors
-#off(brake=True)
