@@ -80,19 +80,6 @@ def get_response(kp, ki, kd, dt, cur_error, prev_error, integral):
 def hk_metric(l_dist, r_dist):
     return (l_dist-r_dist)
 
-
-def theo_metric(l_dist, r_dist):
-    return ((l_dist+r_dist)/2)
-
-def theo_jose_hybrid_metric(l_dist, r_dist):
-    if l_dist > 2500:
-        return (r_dist / 2)
-    elif r_dist > 2500:
-        return (l_dist / 2)
-    else:
-        return theo_metric(l_dist, r_dist)
-
-
 def main():
     '''Main calling Function'''
 
