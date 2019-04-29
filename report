@@ -1,0 +1,346 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% COM2009-3009 Human-Machine Interaction and Robotics
+% Lab Assignment #2
+% Prof. Roger K. Moore & Dr. Mike Mangan
+% University of Sheffield
+% 5 March 2019
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[hidelinks,a4paper,11pt]{article}
+
+\usepackage[margin=1.2in]{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[parfill]{parskip}
+\usepackage{mdframed}
+\usepackage{enumitem,amssymb}
+\usepackage{float}
+\newlist{todolist}{itemize}{2}
+\setlist[todolist]{label=$\square$}
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\newcommand{\done}{\rlap{$\square$}{\raisebox{2pt}{\large\hspace{1pt}\cmark}}
+\hspace{-2.5pt}}
+\newcounter{question}
+\newcommand\myq{\refstepcounter{question}\thequestion}
+\usepackage{gensymb}
+
+
+\begin{document}
+
+
+\begin{titlepage}
+
+\begin{center}
+{\LARGE University of Sheffield}\\[1cm]
+\huge {\bfseries COM2009-3009\\Human-Machine Interaction and Robotics}\\[1cm]
+\includegraphics[width=5cm]{tuoslogo.png}\\[1cm]
+{\LARGE Lab Assignment \#2\\\textbf{`Multi-Layer Control'}}\\[2cm]
+
+% DELETE THESE LINES FOR THE STUDENT VERSION
+%vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+%{\huge \bfseries Instructions}\\[0.5cm]
+%{\Large Prof. Roger K. Moore \& Dr. Mike Mangan}\\[1cm]
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+% UNCOMMENT THESE LINES FOR THE STUDENT VERSION
+%vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+%% EDIT YOUR NAMES
+%{\Large John Smith}\\
+%{\Large David Jones}\\
+%{\Large Scott Macdonald}\\[1cm]
+
+%% EDIT THE ID OF YOUR ROBOT
+%{\LARGE Robot: XY}\\[1cm]
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+{\LARGE Department of Computer Science}\\
+{\Large \today}
+\end{center}
+
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\section{Overview (please read carefully)}
+
+In Lab Assignment \#1 you investigated a single-layer negative-feedback control system.  In particular, you developed a `Proportional-Integral-Derivative' (PID) controller that was capable of steering a robot through a maze consisting of a long winding corridor.  For Lab Assignment \#2 your challenge is to navigate a more complex environment containing real-world hazards - and, in order to do this, you will need to add new layers of functionality to your existing robot through a  \emph{multi-layer} control system.
+
+This programming assignment is worth 30\% of the overall course mark.
+
+\subsection{Logistics}
+
+As before, the lab classes for COM2009-3009 take place in Computer Room 3 in the Diamond (DIA-CR3) from 13:00 to 14:50 on Mondays (for Group A) and 09:00 to 10:50 on Wednesdays (for Group B).  \textbf{The teams have been re-randomised from Assignment 1.  Your new team and robot are listed on MOLE}.
+
+The assignment will again be judged in a league-based competition, and assessed on the basis of a group report (prepared using \LaTeX).
+
+The deadline for handing-in the group report (via MOLE) is \ldots
+
+\begin{center}\textbf{{\large {\color{red}Midnight Friday 17\textsuperscript{th} May 2019 (week 12)}}}\end{center}
+
+{\bfseries Reminder:}  \emph{You may \underline{not} take a robot out of DIA-CR3 under any circumstances!}
+
+{\bfseries Reminder:}  \emph{Please be careful in and around the robot arena; the robots can move unexpectedly and the arena itself is high enough to be a trip hazard.  There is a risk assessment for this in the folder on the teaching podium.}
+
+{\bfseries Reminder:}  \emph{At the end of each lab session, turn off your robot and return it to the correct charging cabinet, with the microcomputer (brick) being placed on charge by plugging in the power adapter in the centre section of the cabinet.}
+
+{\bfseries Reminder:}  \emph{If you have customised your robot, take a photo (as a memory aid) and return it to its original `Driving Base' configuration and place all the Lego back in its box\footnote{This is necessary because, as before, the robots are shared between Group A and Group B.}}.
+
+
+\subsection{Provided Materials}
+
+In addition to these instructions, you have been provided with a \texttt{.zip} file containing a number of items\footnote{The provided \texttt{SystemDiagram.jpg} is simply a placeholder that you will replace with your own diagram.} that you will need for this assignment.  In particular, you have been supplied with a \LaTeX\ template - \texttt{COM2009-3009\_Assignment-2\_Robot-XY.tex} - which will you use to compile your response sheet.
+
+\begin{todolist}
+	\item Before you start working with \LaTeX, edit the filename of the provided \texttt{.tex} file by replacing \texttt{XY} with your robot id.
+\end{todolist}
+
+As before, your edited \texttt{.tex} file should compile to produce a \texttt{.pdf} document with your names on the front cover, followed by your responses to a number of questions.  You will be submitting the \texttt{.pdf} file when you have completed the assignment, \emph{not} the \texttt{.tex} file.
+
+\subsection{Hand-In Procedure}
+
+Once you have completed the assignment, one member of each group should submit your response sheet (in \texttt{.pdf} format) via MOLE.  You do NOT need to submit a paper copy, and do NOT submit your \LaTeX\ source files.
+
+The filename should be of the form \texttt{COM2009-3009\_Assignment-2\_Robot-XY.pdf}.  Please make sure that your names and the id of your robot are shown correctly on the front page of your report.
+
+Standard departmental penalties apply for late hand-in\footnote{\url{http://www.dcs.shef.ac.uk/intranet/teaching/public/assessment/latehandin.html}} and plagiarism\footnote{\url{http://www.dcs.shef.ac.uk/intranet/teaching/public/assessment/plagiarism.html}}.
+
+Feedback (including provisional marks) will be provided via MOLE within three working weeks of the hand-in date.
+
+The deadline for handing-in this assignment (via MOLE) is \ldots
+
+\begin{center}\textbf{{\large {\color{red}Midnight Friday 17\textsuperscript{th} May 2019 (week 12)}}}\end{center}
+
+\subsection{Increase in expected levels of autonomy}
+In Lab Assignment \#1, care was taken to guide you through the various aspects of design that were required to build a maze-running robot.  This included an introduction to the Lego EV3 hardware, sample code for programming your robot, and detailed guides on how to calibrate and program a PID controller.  
+
+In Lab Assignment \#2, we expect teams to work in a more independent manner to find their own solutions to the problems posed.  Part I below provides guides as to the type of behaviours you will need to implement and also links to lectures where common solutions to similar problems were covered.  We strongly encourage students to research novel solutions, or even come up with their own.  Novel solutions can be discussed in the submitted report.
+
+Also, we cannot guarantee extra lab sessions as for Assignment 1 so please plan accordingly.  It is very important to manage your development time on each task to ensure that you get to the end in time for the competition.
+
+{\bfseries Reminder:}  \emph{Lab Demonstrators are provided to guide your development and address technical questions that you might experience.  Given the expectation of independent development they will not be able to debug code or provide full solutions as they will be specific to your robot.}
+
+
+
+\newpage
+\section{Part I: Building A Multilayer Robot Control Architecture}
+
+\subsection{The Search and Assist Challenge}
+
+In Assignment 2 you will again develop a robot to compete against your peers in a simulated life-like challenge within the same test arena as Assignment 1.  Your task is to program a 'search and assist robot' that must find a stricken individual in an unstructured environment (test arena with randomly distributed obstacles) and remain there until further assistance arrives.  The individual's location can be identified by an alarm beacon (light source). Your robot must navigate to the individual's location while avoiding contact with obstacles and the arena walls.  Your robot's start position, and the positions of the target and obstacles will not be revealed until the competition session so you will have to design a controller that works in many conditions.  You shall be ranked by the number of seconds that your robot spends at the target location within the 2 minutes allowed for each robot.
+
+The following sections guide you through development of the various control behaviours that your robot will require to resolve this challenge but we expect and encourage teams to develop novel solutions that improve performance further.  You will also notice that there is increased requirement to design and document unit tests to demonstrate the functioning of your subsystems.  The design of the unit tests is for you to define - as you would in a real engineering or R\&D position. 
+
+\subsection{Building An Obstacle Avoidance Behaviour}
+
+In Assignment 1 you developed a PID controller to follow a maze without touching walls i.e. avoiding obstacles.  In your new group, use the lessons learned from the last assignment to give your robot an obstacle avoidance capability.  
+
+\begin{todolist}
+	\item Program a PID-based obstacle avoidance behaviour.  Take into account the hardware designs that produced the best results in the maze following competition.  Refer to Assignment 1 documentation for reminders on calibrating your controller.
+	\item Design and document unit tests to demonstrate that your robot succeeds in this task.  
+\end{todolist}
+
+{\bfseries Question \myq\ Describe your PID-based obstacle avoidance architecture with accompanying unit tests that demonstrate that it functions correctly. \emph{(worth up to 5 marks)}}
+\\
+\begin{mdframed}
+For our PID obstacle avoidance, we decided to use the same design from the previous lab, as all three of us had used the same method, so we were all familiar with the design and code of the robot.
+Our design relies on the robot's ultrasonic sensors being placed perpendicular to each other facing the front. 
+
+We considered the flaw of not being able to sense the front of the robot, and came up with other ideas such as having a rotating sensor, or putting one sensor facing the front and one facing the side. However, we decided these ideas would be too time consuming with our limited time frame, and it would be better to focus on other features of the robot. Furthermore, due to the sporadic movements of the robot, we believe it will be relatively unlikely that it directly faces an obstacle in its blind spot.
+
+\begin{tabular}{ |p{2cm}||p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|  }
+ \hline
+ \multicolumn{5}{|c|}{Design tests} \\
+ \hline
+ Test & Reason & Expected outcome & Actual outcome & Notes\\
+ \hline
+ Placing the robot in one of the corners & To see if the robot can correctly navigate the space without colliding into an obstacle & the robot can do a full "walk" around the edges of the map & Due to this initial layout being quite spacious, even with interference from other robots, the robot managed to do a walk around the edge of the layout without any side collisions & During competition, with a favorable layout and no outside interference, the obstacle avoidance shouldn't take too many head on collisions\\
+ \hline
+ Placing the robot in the middle of the layout & To see how the robot navigates the layout with obstacles clustered around it& The robot should be able to find it's way out from the cluster of obstacles & The robot was doing ok but due to interference from a robot, collided with a wall &\\
+ \hline
+ Putting it before an obstacle&To test it avoidance with a head on obstacle&Collision with the obstacle&Expected outcome nearly didn't come to be as it tried to go to the middle of the layout but didn't have enough space before the collision&With enough space the robot could have avoided a head on collision \\
+ \hline
+\end{tabular}
+
+\end{mdframed}
+\vspace*{\baselineskip}
+
+\subsection{Adding A Search Behaviour}
+
+Your robot will now be able to react to obstacles but needs a guidance strategy to explore the arena in search of the individual (light).  Thus, your task is to add a search behaviour allowing your robot to explore the environment.
+
+\begin{todolist}
+	\item Program a search behaviour that will drive your robot around the arena.  Consider the various search algorithms that you might use to most efficiently explore the test arena.  \textit{Hint: search strategies were covered in Lecture 6 but there are many others available.}
+	\item In your robot kits you will find a Gyro Sensor which can be used to monitor turning angles and angular accelerations.  This may or may not be useful to your specific search strategy.  Refer to the online EV3 documentation (\url{https://ev3dev-lang.readthedocs.io/projects/python-ev3dev/en/stable/spec.html}), to understand how to access the data from the Gyro Sensor.
+	\item Again, design and document unit tests to demonstrate that your search strategy performs as expected.  If time allows, you may want to implement and compare two different search algorithms to assess which is best suited to the task, or even implement a novel hybrid search strategy. 
+\end{todolist}
+
+{\bfseries Question \myq\ Describe the design of your search algorithm including discussion of design choices and what testing you have implemented. \emph{(worth up to 15 marks)}}
+\\
+\begin{mdframed}
+\begin{tabular}{ |p{3cm}||p{3cm}|p{3cm}|p{3cm}|  }
+ \hline
+ \multicolumn{4}{|c|}{Search algorithms considered} \\
+ \hline
+ Search algorithm & Reason & Pros & Cons \\
+ \hline
+ Spiral search & Easiest to code and use & Would eventually have searched the whole maze & Would take too much time \\
+ \hline
+ Levy flight & Most suitable to search a large space & Fastest algorithm to search a large space& Could easily overshoot the beacon\\
+ \hline
+ Brownian motion & A reliable search that like spiral search guarantees the source is found & Eventually the source is guaranteed to be found & However, the larger the search space, the longer the time required to find the source, plus there is the potential for the robot to eventually go back to places it has already searched\\
+ \hline
+ Hybrid of levy flight and spiral search & The levy flight would be use to drastically reduce the search space, whilst spiral search would ensure the discovery of the beacon & Potential to cut a large amount of the search space whilst guaranteeing a result & spiral search could still take too long \\
+ \hline
+ Wanderer & Whilst we hadn't really considered this a search algorithm, we think it is the most suitable as it will navigate the whole search space & Navigates the whole search space, guaranteeing a result and won't need any extra coding & Has to be paired with a beaconing behaviour to guarantee the source is found \\
+ \hline
+\end{tabular}
+ 
+Therefore we decided to use a wanderer search
+
+\begin{tabular}{ |p{2cm}||p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|  }
+ \hline
+ \multicolumn{5}{|c|}{Design tests} \\
+ \hline
+ Test & Reason & Expected outcome & Actual outcome & Notes\\
+ \hline
+ Putting it in 
+ \hline
+\end{tabular}
+
+\end{mdframed}
+\vspace*{\baselineskip}
+
+\subsection{Switching Behaviours Using A Subsumption Architecture}
+
+Your robot should now have two functioning, single layer behaviours:  obstacle avoidance and search.  You now need to consider how your robot will select which strategy to apply and when.  
+
+\begin{todolist}
+	\item With reference to lecture 4 implement a subsumption strategy allowing your robot to search across the environment while avoiding obstacles. 
+	\item To verify that your robot is performing as you intend, design some unit tests that demonstrate appropriate switching between different behaviours.
+	\item Consider what parameters to optimise to improve performance.
+\end{todolist}
+
+{\bfseries Question \myq\ Describe your subsumption architecture, tests that you have implemented, and performance improvements that led to them.   \emph{(worth up to 15 marks)}}
+\\
+\begin{mdframed}
+Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.
+\end{mdframed}
+\vspace*{\baselineskip}
+
+\subsection{Adding A Stop Behaviour}
+
+In the final competition, the individual's location can be identified by an alarm beacon (omnidirectional light source) that can be used to know when your robot has found the target.
+
+\begin{todolist}
+	\item In your robot kits you will find a Colour Sensor which can be used to classify colours, measure reflected light intensity or measure the ambient light intensity.  You should mount this sensor on your robot and connect to the EV3 using the same port array where your ultrasonic sensors are already connected.
+	\item Refer again to the EV3 documentation to find the command that allows you to access the Colour Sensor.  You should use Ambient Light Intensity mode.  
+	\item Document light readings in various parts of the arena - far away from the light, close to the light (remember that conditions might adapt due to the windows - can you document this?). 
+	\item Using the above information consider where to position the Colour Sensor on your robot and any adaptations that you might make to your robot morphology to improve the signal. 
+	\item You should now have a sufficiently good understanding of the information available to program a stopping behaviour for your robot. Program this and add it as another layer of your submsumption architecture.     
+\end{todolist}	
+	
+{\bfseries Question \myq\ Describe the stopping behaviour including describing your hardware and software solutions, any calibration attempted and any unit testing performed.  Also describe if you added via a subsumption architecture or some other control strategy \emph{(worth up to 15 marks)}}
+\\
+\begin{mdframed}
+Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.
+\end{mdframed}
+\vspace*{\baselineskip}
+
+\subsection{Adding a Beaconing Behaviour}
+
+Your robot now has all the components required to solve the task: search; obstacle avoidance; and stop criteria.  However, performance can be improved further by appreciated that the light also provides information that your robot can use to approach the light source. You are now going to add this beaconing behaviour to your robot.
+
+\begin{todolist}	
+	\item Consider how the light provides information that could be used to guide your robot to the target.  Also consider how you would design a control algorithm that will drive your robot towards the light source (e.g. up a gradient) using a single sensor. You will need to work as a group to develop both a robot morphology and control algorithm to perform this task.  \textit{You might want to refer to material covered in Lecture 6.} 
+\end{todolist}
+
+{\bfseries Question \myq\ Describe the design of your light following behaviour including describing your hardware and software solutions, any calibration attempted and any unit testing performed.   \emph{(worth up to 15 marks)}}
+\\
+\begin{mdframed}
+Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.
+\end{mdframed}
+\vspace*{\baselineskip}
+
+\subsection{Final Multi-layer Control Architecture}
+
+You will need to incorporate this new beaconing behaviour into your robot control strategy.   
+
+\begin{todolist}	
+	\item Can this behaviour be easily added to the subsumption architecture used previously?  Or is an alternative method now required? (\textit{you might want to refer to material covered in Lecture 4.}) In your team you should develop a multi-layer control strategy allowing your robot to complete the final task for the Search and Assist competition.  Use unit testing to assess if your design choices were correct and justify any changes made.
+\end{todolist}
+
+{\bfseries Question \myq\ Describe your final multi-layer control architecture. You should discuss if you chose to stick with a subsumption architecture or use an alternative and justify this design choice.  Support your conclusions with data from unit tests. \emph{(worth up to 15 marks)}}
+\\
+\begin{mdframed}
+Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.  Replace this text with your answer.
+\end{mdframed}
+\vspace*{\baselineskip}
+
+\subsection{Summary}
+
+Your robot is now ready to compete in the final competition!
+
+\newpage
+\section{Part II: Search and Assist Competition}
+
+\subsection{The Competition}
+
+As for Assignment 1, the competition will be organised into a number of leagues, each consisting of several teams (and their robots).  Marks will be awarded based on each robot's performance \textbf{within its league}.  This will mean that each team will be competing against teams that have had an equal amount of time devoted to the development of their respective robots.  The competition will take place during the final lab session.
+
+{\bfseries Note:}  \emph{If there is time at the end of the league battles, the winning robot in each league will compete again to find the overall champion.  This `championship' contest will not count towards the marks for the assignment, but a (small) prize may be awarded.}
+
+As you can imagine, running such an event with a large number of teams/robots requires very precise time management, so we will be issuing a strict timetable for the final lab session.  This should appear on MOLE the week before.  It is essential that you prepare carefully for your designated time slot (otherwise you may lose marks - see below).
+
+The rules for the competition are as follows:
+\begin{enumerate}
+	\item Each team must register their arrival at the arena (with their robot) 10 mins prior to their league's designated time slot, after which no further technical development will be permitted.
+	\item Each team will be called forward in turn to place their robot on the starting position.
+	\item An `official' run for each team's robot will be timed by the lab demonstrators / lecturers.  They will record the accumulated time that the robot spends in the designated target area surrounding the light source during the 2 minutes allowed.
+	\item Each `touch' with a wall or obstacle will incur a \textbf{-10 second penalty}.
+	\item If a robot needs to be `rescued', a \emph{designated} team member may place it back in the arena the course at the location where things went wrong.  However, the clock will keep running.
+	\item The designated rescuer must stand \emph{outside} the arena next to the starting position, and return to that position after each rescue.
+	\item Up to two rescues are permitted.
+	\item Each rescue will incur a \textbf{-20 sec penalty}.
+	\item A third rescue is NOT permitted.  Instead the run will be terminated and the total time accumalated at the target recorded.
+	\item Teams will be ranked in their league according to their accumulated time at the target (minus any penalties).  [what to do with people clustered on 0min?]
+\end{enumerate}
+	
+Marks will be awarded as follows:
+\begin{itemize}
+	\item 15 marks will be awarded to the team with the best run within their league, 14 marks to the second best team, and so on.  
+	\item 5 \emph{bonus} marks will be awarded for a robot that stops within the target location within the 2 minute time limit with \emph{no} wall or obstacles touches and \emph{no} rescues.
+	\item A team who fails to appear at the starting position will receive 0 marks.
+\end{itemize}
+
+
+\subsection{Your Team's Performance}
+
+{\bfseries Question \myq:}  \emph{What was the result of your official attempt?} (Worth up to 20 marks)\\
+\begin{mdframed}
+\begin{center}
+	\begin{tabular}{ |c|c|c|c|c| } \hline
+		 \bf{Total Time at Target} & \bf{Wall/Obstacle Touches} & \bf{Rescues} \\ \hline
+		 00:00 & 0/1/2/\ldots & 0/1/2/\ldots \\ \hline
+	\end{tabular}
+\end{center}
+\end{mdframed}
+\vspace*{\baselineskip}
+
+{\bfseries Note:}  \emph{The demonstrators will have already recorded the above information.  However, please include it here as a cross-check.}
+
+Finally, how did you organise your team?  I.e.\ what was each member's role and responsibility, and what was each person's contribution as a \% (adding up to 100\%)?  Please fill in the Table below:
+\begin{center}
+	\begin{tabular}{ | c | p{8cm} | c | } \hline
+		 \bf{Team Member} & \bf{Role} & \% \\ \hline
+		? & ? & ? \\ \hline
+		? & ? & ? \\ \hline
+		? & ? & ? \\ \hline
+	\end{tabular}
+\end{center}
+
+
+
+\end{document}
