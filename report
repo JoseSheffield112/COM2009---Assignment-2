@@ -148,17 +148,14 @@ In Assignment 1 you developed a PID controller to follow a maze without touching
 Design:\par
 Hardware:\par
 We initially used the predominant lab 1 robot configuration (front facing perpendicular ultrasonic sensors), as we were all familiar with this configuration and had the same working PID code. However, during the unit testing (see below), we had a few instances where the robot hit an obstacle head on due to it being in it's blind spot. We decided to make a new design so we could aim for the extra 5 marks of avoiding obstacles.
-The new design uses a rotating ultrasonic sensor, that continuously alternates between scanning the front, right and left of the robot. Whilst this method still has a distinctive weakness of reacting slower to obstacles on a side the robot isn't facing, we have taken steps to decrease the occurrence by limiting the speed and increasing the minimum distance in the PID software implementation (tests below).
-In the end we went with the second implementation, as it allowed us to overcome 2 weaknesses of the first design. Firstly, we significantly reduced the robot blind spots; furthermore, if our robot has a wall in front of it, this method scans both sides without moving to assess the best side to turn to, instead of colliding with the wall.
+The new design uses a rotating ultrasonic sensor, that continuously alternates between scanning the front, right and left of the robot. Whilst this method still has an inherent weakness of reacting slower to obstacles on a side the robot isn't facing, we have taken steps to decrease the occurrence of this by limiting the speed and increasing the minimum distance in the PID software implementation (tests below).
 
 Software design:\par
-For the first hardware design we used our previous labs PID avoidance code, which subtracted the left measurement from the right and used this value to calculate the wheel speed (this method introduced some errors in large spaces, as this PID method is most suitable to tight spaces, which we have overcome in our second implementation).
-We then adapted the PID code from our first lab assignment so that the robot wheels move at a base speed; if a value from one of the robots sides is within the minimum distance, it will calculate a value with that distance and deduct it from the opposite wheels base speed (similar to the Braitenberg "explorer robot"). When the front value is within the minimum distance, the robot stops and backs ups, then measures its left and right side; it then moves to the side with the highest value, favoring the left if both values are at the sensor maximum.
+For the first hardware design we used our previous labs PID avoidance code, which subtracted the left measurement from the right and used this value to calculate the wheel speed (this method introduced some errors in large spaces which we have overcome with our second design).
+For our second implementation of a rotating sensor, we adapted the PID code from our first lab assignment so that the robot wheels move at a base speed; if a value from one of the robots sides is within the minimum distance(set to 5cm during testing), it will calculate a speed value with that distance and deduct it from the opposite wheels base speed (similar to how the Braitenberg "explorer robot" operates). When the front value is within the minimum distance, the robot stops and backs ups, then measures its left and right side; it then moves to the side with the highest value, favoring the left if both values are at the sensor maximum of 2550.
 
 Unit tests:
-We performed the same tests for each method, so by the end we could make a clear decision on the most preferable avoidance system.
-
- During our tests, we kept the minimum distance a consistent 3cm, which is what we will use during the rest of the labs.
+We performed the same tests for each method for fair comparison, so by the end we could make a clear decision on the most preferable avoidance system.
 
 \begin{tabular}{ |p{2cm}||p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|  }
  \hline
@@ -166,16 +163,15 @@ We performed the same tests for each method, so by the end we could make a clear
  \hline
  Scenario & Reason & Expected outcome & Actual outcome & Notes\\
  \hline
- Placing the robot in the middle of the arena & To test if PID avoidance code is working & Robot moves and avoids any oncoming obstacles & Robot moved and avoided obstacles & We ran this twice, as in first test it collided with an obstacle in its blindspot as it was moving too fast.\\
+ Placing the robot in the middle of the arena & To test if PID avoidance code is working & Robot moves and avoids any oncoming obstacles & Robot moved and avoided obstacles & We ran this twice, as in first test it collided with an obstacle in its blindspot.\\
  \hline
- Placing the robot facing a corner & To test whether the robot can get itself out without a collision & The robot gets itself out of the corner with no collisions & The robot collided with the wall a few times and needed a rescue & N/A. \\
+ Placing the robot facing a corner & To test whether the robot can get itself out without a collision & The robot gets itself out of the corner with no collisions & The robot collided with the wall a few times and needed a rescue & \\
  \hline
- Placing the robot in front of an obstacle& So we can get a feeling of how large the blind spot is & Collides with the obstacle & The robot collided with obstacle & We did a few of these tests, varying the distance to the obstacle (so it could move into an angle that could detect the obstacle) and weren't satisfied with the results. \\
+ Placing the robot in front of an obstacle& So we know if we have to worry about the robots blindspot & Avoids collision with the obstacle & The robot collided with the obstacle & After a few tests where we varied the distance, we weren't happy with the results. \\
  \hline
 \end{tabular}
 
-Due to the faults found with the previous implementation of the robot which were highlighted previously, we pursued a different design.
-We then decided to  test the robot with the same tests of the previous design.
+Due to the faults identified above with the previous implementation of the robot, we pursued a different design, the unit tests of which are below.
 
 \begin{tabular}{ |p{2cm}||p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|  }
  \hline
@@ -183,23 +179,22 @@ We then decided to  test the robot with the same tests of the previous design.
  \hline
  Scenario & Reason & Expected outcome & Actual outcome & Notes\\
  \hline
- Placing robot in the middle of the arena & To test whether PID avoidance code is working & Robot moves about arena avoiding obstacles & Robot moved and avoided obstacles & There were a few instances were other robots crashed into it on its blind spot, but it reacted well to stationary obstacles \\
+ Placing robot in the middle of the arena & To test whether PID avoidance code is working & Robot moves about arena avoiding obstacles & Robot moved and avoided obstacles & There were a few instances were other robots crashed into it on its blind spot which we have decided to leave since it reacted well to stationary obstacles \\
  \hline
- Placing the robot in a corner & To see if programmed behavior works & Robot should back up and turn another direction & Robot did as intended & N/A \\
+ Placing the robot in a corner & To see if it can leave it without collisions or rescues & Robot should back up and turn another direction & Robot did as intended & \\
  \hline
  Placing the robot in front of an obstacle & To test one of the main flaws in previous design & Robot backs up and turns another direction & Robot did as intended & \\
  \hline
 \end{tabular}
 
- It is clear from the 2 unit tests that our second design is working best. Whilst there are some weaknesses to it, such as the constant shaking of the sensor introducing further uncertainties to an already spotty sensor, and the slow reaction times, all designs have inherent flaws that cannot be overcome with the time and resources we have, so we're happy enough with the current design.
- 
+ It is clear from the 2 unit tests that our second design is working best. Whilst this designs has some weakness, such as the constant shaking of the ultrasonic sensor and the slow reaction times, we believe all designs have inherent flaws that cannot be overcome with the time and resources we have been allocated, and the current design overcomes various issues we'd have with other implementations, such as significantly reducing the robots blind spots and being able to make an effective decision on were to turn if the robot is in a very constricted spot.
  
  
  Additional insights:\par
- If time allowed, we would have explored a way of increasing the accuracy of the measurements (potentially by the 2 rotating sensors opposite each other). However, the extra time needed to implement this with the PID software would take too long.
- Furthermore, another solution we would have liked to have tested (idea collected from dyson hoover lecture) would be to use a touch sensor on both sides of the robot, so when it's close to a collision on the side, the sensor would introduce this input and the robot would steer away from it. This solution would easily overcome burden placed on the ultrasonic sensor as well as reducing the probability of a collision.
+ If time allowed, we would have explored a way of increasing the accuracy of the measurements (potentially with 2 rotating sensors opposite each other). However, the extra time needed to implement this with the PID software would be too long.
+ Furthermore, another solution we would have liked to have tested (idea collected from dyson hoover guest lecture) would be to use a touch sensor on both sides of the robot, so when it's close to a collision on a side, the sensor would identify this and the robot would steer away from it. This solution would easily overcome burden placed on the rotating ultrasonic sensor design as well as reducing the probability of any collisions.
  
- However, to further the implemented design without hardware changes we'd have liked to implement 2 new features that we did not have time to develop. Firstly, we would have liked to increase the snapshots of distance the sensor captures - currently, we an only rotate between the 3 sides roughly every 4 seconds due to the weakness of the motor, and if increased further, it becomes very unstable and we're not even sure we could this with PID coding. A second feature we'd like to add is making an internal map, where the robot keeps a "picture" of each distance from an obstacle in the 180 degrees in front of it, and considers the distance in the direction its currently moved.
+ However, to further the implemented design without any hardware changes we'd have liked to implement 2 new features that we did not have time to develop due to their large scope and complexity. Firstly, we would have liked to increase the number of distance measurements the sensor captures - currently, we only rotate between 3 sides roughly every 4 seconds due to the weakness of the motor. A second feature we'd like to add is making an internal map, where the robot keeps a record of the distance from each measured obstacle in its front path.
 \end{mdframed}
 \vspace*{\baselineskip}
 
@@ -218,7 +213,7 @@ Your robot will now be able to react to obstacles but needs a guidance strategy 
 \begin{mdframed}
 Design:\par
 Hardware design:\par
-For our spiral search we secured a light sensor at the front of the robot to minimize the swaying of the robot when doing sharp turns so our values were more accurate. We placed the sensor at the front of the robot so there was no bias (as placing it on a side will blind to values from the opposite side).
+For our spiral search we secured a light sensor at the front of the robot to minimize the swaying of the sensor when doing sharp turns so our values were more accurate. We placed the sensor at the front of the robot so there was no measurement bias (as placing it on a side would blind it to values from the opposite side).
 When using the wanderer search, we paired our light sensor with the ultrasonic sensor on the rotation motor, so it's easier for the robot to take recordings of light values around it.
 
 Algorithm design:\par
@@ -226,33 +221,27 @@ We initially coded a simple spiral search with the spiralling radius gradually i
 We felt confident the robot could eventually find the light source with this search pattern, however due to the time restriction and the varying map layout (which could prevent us from effectively using a spiral search), we decided to code another pattern so we could compare the two and be confident the one chosen was best.
 We decided to compare the spiral search to a wanderer search. This search pattern uses the PID avoidance system aggregated with a color sensor, to "wander" around the arena whilst favouring areas with higher light intensity. This search pattern is best suited to our robot due to the rotating ultrasonic sensor.
 
-Spiral search:
-3:46, 2:57, 35,  1:05
-wanderer search:
-1:49, 1:22, 9, 29
-Below are the tests comparing both algorithm design we made. We did 4 trials for each pattern, 2 close to the source and 2 far from the source, and measured how long it took for the robot to reach a light value above 35, where the beaconing behavior would then take over.\par
-Unit tests:
-
+Below are the unit tests of both algorithms we designed. We did 4 trials for each pattern, keeping the distance the same for each pattern, but varying the distance between tests. We measured the time it took for the robot to reach a light value above 35, where the beaconing behavior would then be expected to take over.\par
 
 \begin{tabular}{ |p{3cm}|p{3cm}|p{2.5cm}|  }
  \hline
  \multicolumn{3}{|c|}{Unit tests : spiral search vs wander search} \\
  \hline
- Method & Time (n=4) & Notes\\
+ Method & Large & Notes\\
  \hline
  Spiral search & Mean = 2:05 & \\
  \hline
- Wanderer search & Mean = 57 & \\
+ Wanderer search & Mean = 57  & \\
  \hline
 \end{tabular}
 
-It is worthwhile to consider that all these tests were conducted during lab times, when everyone else was also using their robots, hence, there is a certain amount of interference in the times. However, it is abundantly clear that the best search pattern we can use is the wanderer search.
+It is worthwhile to consider that all these tests were conducted during lab times, when everyone else was also using their robots, hence, there is a certain amount of interference in the times. However, it is abundantly clear from the tests above that the best search pattern we can use is the wanderer search.
 
-During later stages of development we aggregated a function which every 30 execution cycles, will do a 360 degree spin on the spot, recording a light value about every 5 degrees, and then heads in the direction of most light. We did this for two reasons; firstly, to ensure that our robot is heading the correct direction and won't miss the light by passing by it's side. Secondly, so that if the robot is getting stuck around the same area, this should help it to head a new direction.
+During later stages of development we aggregated a function which every 30 execution cycles, will do a 360 degree spin on the spot, recording a light value about every 5 degrees, and then heads in the direction of the highest light value. We did this for two reasons; firstly, so that if the robot gets stuck in a loop due to the obstacle avoidance, this should help it break out of it. Secondly, so that if the robots wanderer search path keeps facing the back of the light, we can introduce that measurement without too much interference.
 
 Additional insights:\par
 Like the PID avoidance issue, the robot would work much more efficiently if it was able to collect more light samples, which would require the rotation motor to move faster.
-Furthermore, one of the design issues we have is we placed the light sensor at the top of the robot due to the rotating motor, however, the light source emits light from the bottom half at the floor. Hence, the robot would collect much more accurate light values if the sensor was at the bottom half of the robot.
+If we had access to another light sensor, we would have liked to use opposite each other, as this way we can effectively reduce the likely hood of the robot turning its back on the light ignoring it. Plus, we could use this so the robot knows when it is following the light from the window (the light from the window would caue both light value measurements to be quite similar, whilst the light source is not strong enough to produce this effect).
 \end{mdframed}
 \vspace*{\baselineskip}
 
@@ -271,11 +260,11 @@ Your robot should now have two functioning, single layer behaviours:  obstacle a
 \begin{mdframed}
 
 Our robots subsumption architecture currently works in the following manner:\par
-- PID avoidance behavior is at the bottom and subsumed by search behavior, however, it will subsume the search behavior if the distance measurement comes to within 3cm. 
-- The search behavior will subsume the PID avoidance behavior when it is not avoiding. It will direct the robot and only be subsumed when it is close to an obstacle. 
+- PID obstacle avoidance is at the bottom and subsumed by search behavior, however, it will subsume the search behavior if the distance measurement comes to within 5cm. \par
+- The search behavior will subsume the PID avoidance behavior when the robot is not actively avoiding anything. It will direct the robot to areas of higher light intensity. We have also prepared for it to be subsumed by the search behavior once the light value rises above a certain threshold (a value of 35 is being used temporarily).
 
 Unit tests:\par
-We completed some unit tests to check if the subsumption architecture is working as intended.
+We completed some unit tests to ensure the subsumption architecture is working as intended.
 
 \begin{tabular}{ |p{2cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|  }
  \hline
@@ -283,13 +272,37 @@ We completed some unit tests to check if the subsumption architecture is working
  \hline
  Test & Reasoning & Expected results & Actual results & notes \\
  \hline
- Placing the robot before an obstacle & to check whether the PID avoidance will be acivated straight away & Robot will avoid obstacle & worked as intended & \\
+ Placing the robot before an obstacle & To check whether the PID avoidance will be used to avoid obstacle & Robot will avoid obstacle & Worked as intended & \\
  \hline
- Placing the robot in the maze & To check whether the robot will use each appropriate behavior when intended & Each behavior suitable to the task will be activated when needed & worked as intended & We put a print statement on each behavior so we knew when the correct behavior was being activated\\
+ Placing the robot in the middle of the maze & To check whether the robot will use the most appropriate behavior for the current state & A behavior suitable to the current state will be activated & Worked as intended & We put a print statement on each behavior so we knew when the correct behavior was being activated. PID avoidance was only used when close to obstacles as expected.\\
+ \hline
+ Putting the robot in front of light source & To check the correct behavior takes over, without the robot trying to avoid the light source & Robot stops and does not avoid light source & Robot did as intended & We temporarily made a simple stop (speed set to 0 on both motors) behavior, so we knew the correct behavior would be used \\
  \hline
 \end{tabular}
 
-The unit tests show that the subsumption architecture implemented in the robot is working as intended. However, we noticed during these unit tests that if the robot was heading to a wall and the sensor had just measured the distance, the speed we programmed it with would cause it to collide, so we have decreased the distance from when the PID avoidance behavior takes over to 2cm.
+
+The unit tests above show that the subsumption architecture implemented in the robot is working as necessary. 
+
+An issue we identified during these tests is the light value threshold, where the robot commonly mistook the value from the window as the light source, activating the temporary stop behavior. Hence we did some unit tests to determine the right values to use in our program to activate different behaviors. However, during testing, we realized it was more efficient to build a container for the light sensor which only let in light from the front. When we began testing this design (see table below) our values were lower than anticipated, and we realized it was because light is emitted from the floor whist our sensor was higher up and we were blocking light from the bottom with the container. We then changed the design to allow light from the bottom as well. Results of this change can be seen in the table below.
+
+\begin{tabular}{ |p{2cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|  }
+ \hline
+ \multicolumn{5}{|c|}{Unit tests : color sensor} \\
+ \hline
+ Physical configuration & Light source & Window & Arena corner & Notes\\
+ \hline
+ Uncovered & Mean = 38.8, std = 3.2 & Mean = 34.6, std = 4 & Mean = 13, std = 3.1 & \\
+ \hline
+ Covered & Mean = 17.6, std = 1.9  & Mean = 8.8, std = 1.7 & Mean = 3, std = 1.9 & \\
+ \hline
+ Bottom plaque gone & Mean =24.6, std = 3.2 & Mean = 11, std = 1.9 & Mean = 2, std =1.3 & \\
+ \hline
+\end{tabular}
+
+From the results above, it is clear that by covering the light sensor we have been able to get more trustworthy values and reduced the likely hood of the robot mistaking a window as the light source.
+
+Carrying on we will be using a value threshold of 17 to start our beaconing behavior, and a value of 24 to activate our stopping behavior.
+
 \end{mdframed}
 \vspace*{\baselineskip}
 
@@ -309,84 +322,29 @@ In the final competition, the individual's location can be identified by an alar
 \\
 \begin{mdframed}
 Design:\par
-Hardware design:\par
-For our search algorithm, we paired the color sensor with the ultrasonic sensor. While developing our stop behavior, our robot commonly mistook the light from the windows as the light source, so to deter this, we built a container for the light sensor, which blocked light from all sides except the front. When we began testing this method (see below) our values were lower than anticipated, and we realized it was because light was emitted from the floor whist our sensor was higher up and we were blocking light from the bottom. We then the design to allow light from the bottom as well. Results of this change can be seen below.
-
 Software design:\par
-We initially stopped our robot when the light source was above a certain threshold (light source column from color sensor unit test), but we found there were lots of fake positives even when we covered the light sensor, so our next step was to aggregate distance from light source to our stop behavior. Whilst this reduced fake positives (see unit tests below), it did not completely stop them, and it also introduced some errors as the robot would commonly go past the light due to not being in a straight path to it. To overcome this issue, we created a function so when the light is above a certain threshold, indicating it is very close to the light sensor(24, as seen in unit tests), the robot stops and does a 360 degree turn, then heads in the direction with the highest light intensity until the measured distance is less than 250cm. As can be seen from the unit testing below, this resulted in no more fake positives.
+We initially stopped our robot when the light source was above a value of 24 (see color sensor unit tests in Question 3) and there was a suitable distance from an obstacle, however, due to the reflectivity of the arena walls, we had a few fake positives when the light source was close to the walls, or it was a particularly sunny day. This method also had some design flaws, such as the robot ignoring the light source when it passed right beside it (because it did not have a suitable distance value to activate the stop behavior). To overcome this issue, we created a "near light" function so when the light value is around 20 (indicating it is very close to the light source), the robot stops and does a 360 degree turn, then heads in the direction with the highest light intensity until the measured distance is less than 25cm. As can be seen from the unit testing below, this resulted in no more fake positives.
 
 Unit testing:\par
-We performed two types of unit tests to develop our stop behavior. Firstly, we measured what light values our color sensor gave under different circumstances.
+We did 6 tests for each stopping behavior version made, keeping the tests the same for each version so it was fair. 
 
-uncovered:\par
-light source
-38, 43, 35, 42, 36
-Mean = 38.8, std = 3.2
-window
-35,33,28,40,37
-Mean = 34.6, std = 4
-arena
-15,12,18,9,11
-Mean = 13, std = 3.1
-
-covered:\par
-light source
-17,21,18,16,16
-Mean = 17.6, std = 1.9
-window
-10,8,6,9,11
-Mean = 8.8, std = 1.7
-arena
-1,1,4,6,3
-Mean = 3, std = 1.9
-
-bottom half gone:\par
-light source
-30,22,26,24,21
-Mean =24.6, std = 3.2
-window
-10,13,8,11,13
-Mean = 11, std = 1.9
-arena
-1,3,1,1,4
-Mean = 2, std =1.3
-
-
-\begin{tabular}{ |p{2cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|  }
+\begin{tabular}{ |p{4cm}|p{2.5cm}|p{2.5cm}|p{2cm}|  }
  \hline
- \multicolumn{5}{|c|}{Unit tests : color sensor} \\
+ \multicolumn{4}{|c|}{Unit tests : stopping behavior} \\
  \hline
- Physical configuration & Light source & Window & Arena corner & Notes\\
+ Method & True positives  & False positives & Notes \\
  \hline
- Uncovered & Mean = 38.8, std = 3.2 & Mean = 34.6, std = 4 & Mean = 13, std = 3.1 & \\
+ Stopping with light value and distance measurement & 5 & 1 & \\
  \hline
- Covered & Mean = 17.6, std = 1.9  & Mean = 8.8, std = 1.7 & Mean = 3, std = 1.9 & \\
- \hline
- Bottom plaque gone & Mean =24.6, std = 3.2 & Mean = 11, std = 1.9 & Mean = 2, std =1.3 & \\
+ Stopping behavior aggregated with "near light" function & 6 & 0 & \\
  \hline
 \end{tabular}
 
-From the results above, it is clear that by covering the light sensor we have been able to get more trustworthy values and reduced the likely hood of the robot mistaking a window as the light source.
-
-We also tested the software design of the robot to ensure we succeeded in reducing the false positives.
-
-\begin{tabular}{ |p{2cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|  }
- \hline
- \multicolumn{5}{|c|}{Unit tests : software design} \\
- \hline
- Method & Number of tests & False positives & Notes \\
- \hline
- Stopping with light value & 6 & 3 & \\
- \hline
-\end{tabular}
-
-Our tests show that with the hardware and software changes made, our stopping behavior has become much more reliable and effective.
+As can be seen from the tests above, the final version we made effectively eliminated false positives for the time being, though it did end up adding some extra time (~8 seconds) before the robot fully stopped.
 
 Additional insights:\par
-An issue we found during our unit tests of the software design, is due to the way we've coded the algorithm, when the robot is rotating, it will only stop when it reaches the same value (highest or higher) it reached before, which means if it gets dislocated during the spin to be further away from the light, it will not stop until it closer to the light. We would have liked to make this function more robust, however due to the time constraints we weren't able to.
-Furthermore, we would have liked to further improve our hardware design, because the color sensor is too high in the robot (which also introduces errors to the ultrasonic sensor). This currently is unavoidable due to how we've constructed the rotation motor. One way we've mitigated this is by leaning the rotating sensor forward but this introduces some discrepancies while taking value measurements. Hence, we would have liked to find a way to inverse the rotating motor so the color and ultrasonic sensor could be further down, but the hardware design of this would be too complex with the time we have.
-
-
+An issue we found during our unit tests of the software design, is due to the way we've coded the algorithm without a gyro sensor, when the robot is rotating, it will only stop when it reaches the same value it started with, which means if it gets dislocated during the spin to be further away from the light, it will not stop until it closer to the light. We would have liked to make this function more robust by adding the gyro sensor, but due to time constraints, because it works we've left it as is.
+We would have improved our hardware design by lowering the color sensor which is currently placed too high in the robot (which also introduces errors to the ultrasonic sensor). Currently this is unavoidable because it was the only way of inserting the rotation motor at the front of the robot. One way we've mitigated this is by leaning the rotating sensor down but this introduces some discrepancies while taking value measurements. Hence, we would have liked to find a way to inverse the rotation motor so the color and ultrasonic sensor would be at the bottom of the robot, but the hardware design of this would be too complex to implement with the time we have.
 \end{mdframed}
 \vspace*{\baselineskip}
 
@@ -402,38 +360,35 @@ Your robot now has all the components required to solve the task: search; obstac
 \\
 \begin{mdframed}
 Design:\par
-Hardware design:\par
-Due to all the previous modifications to the hardware, we didn't need to change the physical configuration of the robot for our beaconing behavior.
-
 Software design:\par
-When our wanderer search records a light value above 17 (which we found in the stopping behavior unit tests, is higher than light values from the window), it assumes it is roughly facing the direction of the light source. It proceeds by doing a 360 turn while recording light values (same as the wanderer search function appended at the end), and heads in the direction of highest light intensity in a wavy motion (like a snake); this ensures that it is always on a path with highest intensity, and if it isn't, it adjusts itself. We did this as during the search behavior, we found the robot would commonly go past the light.
-Once it is close to the light and the light value passes a threshold of 24, the stopping behavior subsumes the beaconing behavior.
+When our wanderer search records a light value above 17, it assumes it is roughly facing the direction of the light source. It proceeds by doing a 360 degree turn while recording light values (same as the wanderer search function appended at the end), and heads in the direction of highest light intensity in a wavy motion (like a snake); this ensures that it is always on a path with highest light value, and if it isn't, it adjusts itself. This should result in the robot being on a direct path to the light source. We did this as during the stop behavior, we found the robot would commonly go past the light.
+Once it is close to the light so that the light value passes a threshold of 24, the stopping behavior subsumes the beaconing behavior.
 
 Unit tests:\par
 To ensure the beaconing behavior is working as intended, we carried out some tests:
 
-\begin{tabular}{ |p{2cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|  }
+\begin{tabular}{ |p{3cm}|p{3cm}|p{3cm}|p{3cm}|  }
  \hline
- \multicolumn{5}{|c|}{Unit tests : Beaconing behavior} \\
+ \multicolumn{4}{|c|}{Unit tests : Beaconing behavior} \\
  \hline
- Test & Reasoning & Expected results & Actual results & notes \\
+ Test & Reasoning & Expected results & Actual results \\
  \hline
- Putting robot close (300cm) to source & To ensure stop behavior takes over & Robot executes stop behavior & Robot executed stop behavior & \\
+ Putting robot close (300cm) to light source & To ensure stop behavior takes over & Robot executes stop behavior & Robot executed stop behavior \\
  \hline
- Putting robot 1 meter from source & To test beaconing behavior & Robot makes it's way to source & Robot made it's way to light source & \\
+ Putting robot 1 meter from light source & To test beaconing behavior finds the light & Robot makes it's way to source, and stop behavior then takes over & Robot did as intended \\
  \hline
- Putting robot left of the light & To test whether robot can correct it's trajectory & As robot makes its way to the source, it adjusts it's path & Path was adjusted & \\
+ Putting robot left of light source at a distance of a meter & To test whether robot can correct it's trajectory & As robot makes its way to the source, it adjusts it's path & Path was adjusted \\
  \hline
- Putting robot close to an obstacle & To test whether PID avoidance takes over when needed & Robot avoids obstacle and then moves towards light & Test correctly carried out & \\
+ Putting robot close to an obstacle next to light source & To test whether PID avoidance takes over when needed & Robot avoids obstacle and then beaconing behavior takes over & Robot did as expected \\
  \hline
- Putting robot just left of the light & To test whether it can find the light & Robot does 360, and turns towards light, where stopping behavior takes over (due to proximity) & Robot did as expected & \\
+ Putting robot just left of the light source at a distance of 400cm & To test whether it can find the light source & Robot does 360 scan due to high light level, and turns towards light, where stopping behavior takes over (due to proximity) & Robot did as expected \\
  \hline
 \end{tabular}
 
-Our tests have shown that the beaconing behavior works as expected, so that the robot is ready for the competition.
+We're really happy with how well the beaconing behavior seems to work as can be seen from the unit tests.
 
 Additional insights:\par
-We have done the most we can to decrease the likely hood of the robot passing next to the light without noticing, which is why we made the threshold to do a 360 so low, we haven't implemented any fail safes for this, so that if there were some issue, the robot could still pass next to the light without noticing. If we had more time, we would have liked to implement a feature where the robot keeps an average of the last few measurements (maybe 100), and if it notices a sudden drop in the light value, it triggers a 360 scan for the light. Whilst this seems easy to implement, we did not have the time to do so and test it, and the current method as worked well so far, this would just be to ensure there is no chance of something like this happening.
+We have done the most we can to decrease the likely hood of the robot passing next to the light without noticing, which is why we made the threshold to do a 360 so low, but we haven't implemented any fail safes to prevent this from happening. If we had more time, we would have liked to implement a feature where the robot keeps an average of the last few measurements (maybe 100), and if it notices a sudden drop in the light value (indicating it just passed by the light source_, it triggers a 360 scan. Whilst this seems easy to implement, we did not have the time to implement this and test that it worked effectively.
 
 
 \end{mdframed}
@@ -452,32 +407,37 @@ You will need to incorporate this new beaconing behaviour into your robot contro
 \begin{mdframed}
 
 Our final subsumption architecture has the following hierarchy:\par
-- At the top is the stop behavior, which subsumes the previous behavior when the light intensity reaches a value of 24\par
-- Below the stop behavior is the beaconing behavior, which subsumes the wanderer search when the light value surpasses a value of 17\par
-- Below the beaconing behavior, is the wanderer search, which is subsumed by the beaconing behavior when the light value surpasses 17 or when a distance measurement is less than 2cm\par
-- At the bottom is the PID avoidance, which subsumes any behavior when the distance measurement is at 2cm or less.
+- At the top is the stop behavior, which subsumes any previous behavior as long as the light value recorded surpass 24. This behavior does a last scan to ensure it is heading in the right direction, and then stops when the measured distance reaches 25cm.\par
+- Below the stop behavior is the beaconing behavior, which subsumes the wanderer search when the light value surpasses a value of 17. When it takes over, it does a 360 scan, and in a wavy motion, heads in the direction of the highest light value until it is subsumed by the stop behavior (if for some reason it isn't, the PID avoidance takes over).\par
+- Below the beaconing behavior, is the wanderer search which is activated when a light value above 17 is recorded. The wanderer search randomly heads in the direction of high light intensity. Every 30 execution cycles, it does a 360 scan to ensure it is heading in a direction of high light intensity.\par
+- At the bottom is the PID avoidance, which subsumes any behavior when the distance measurement is at 5cm or less.
 
-We've chosen to stick to a subsumption architecture because we unknowingly coded our robots behaviors to follow it perfectly. The robots behavior have been decomposed into several sub-behaviors that are sequential and need each other. The robot works in a very bottom up fashion, increasing the complexity of behaviors when it is deemed necessary. It also works by slowly subsuming lower behaviors, as was mentioned in the beaconing behavior.
+We've chosen to stick to a subsumption architecture because we unknowingly coded our robots behaviors to follow suit perfectly. The robots behavior has been decomposed into suitable sub-behaviors that are sequential and build off each other. The robot works in a very bottom up fashion, increasing the complexity of behaviors when it is deemed necessary. It also works by slowly subsuming lower behaviors, as was mentioned in the beaconing behavior.
 
-Below we've done some unit tests to ensure the robot works fully as intended:
+Below we've done some unit tests to ensure the robot is prepared for the final competition:
 
 \begin{tabular}{ |p{2cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|  }
  \hline
- \multicolumn{5}{|c|}{Unit tests : Beaconing behavior} \\
+ \multicolumn{5}{|c|}{Unit tests : subsumption architecture tests} \\
  \hline
  Test & Reasoning & Expected results & Actual results & notes \\
  \hline
- Placing the robot in front of light source & & & & \\
+  Putting robot before an obstacle next to the light source & To test the interaction between the different behaviors & The robot should use PID avoidance, then wanderer search to find the light source, then beaconing and stopping behavior when at the light & Robot did as intended and stopped at the light & \\
  \hline
- Placing the robot 2cm from light & To check that the stop behavior takes over & All behaviors except stop behavior are ignored & Beaconing behavior was activated where the robot did a 360, then stop behavior took over & Even though the expected outcome did not come to pass, the robot still did not avoid the light, so we have left this behavior. With more time we could have improved this. \\
+ Placing the robot 5cm from light & To check that the stop behavior takes over & All behaviors except stop behavior are ignored & Beaconing behavior was activated where the robot did a 360, then stop behavior took over & Even though the expected outcome did not come to pass, the robot still did not avoid the light, so we did not make any changes. With more time we could have improved this. \\
  \hline
- Placing the robot 2cm in front of an obstacle & To ensure obstacle avoidance activated and correct behaviors are then used & Obstacle avoidance is used, then search behavior takes over & Did as intended.\\
+ Placing the robot 5cm in front of an obstacle & To ensure obstacle avoidance activated and correct behaviors are then used & Obstacle avoidance is used, then search behavior takes over & Did as intended.\\
+ \hline
+ Placing the robot in the middle of the arena & To ensure our robots behaviors work together to find the light source & Robot successfully finds light source & Expected outcome came to pass & There were a few collisions with moving obstacles, but when there was no interference, the robot avoided stationary obstacles quite well \\
+ \hline
+ Putting the robot in the opposite side of the arena, facing away from the light & To test how robot does with very unfortunate start & Robot eventually finds the light, with no collisions or rescues & Expected outcome came to pass & \\
  \hline
 \end{tabular}
 
-From the unit tests above we can see there are certain areas that could be improved, such as the second test, where the robot used more behaviors than were needed, however, due to time constraints and because the robot still achieved the wanted goal, we have left this.
+From the unit tests above, whilst the robot appears to be ready for the final competition, there are certain areas we would have liked to improve given more time, such as in the second test, where the search behavior took over instead of stopping behavior.
+However, the tests above prove that the robot is ready for the competition, so we will not make anymore changes.
 
-
+Our unit tests also demonstrate that different behavior subsume each other as intended, proving the subsumption architecture is working correctly.
 \end{mdframed}
 \vspace*{\baselineskip}
 
@@ -537,9 +497,9 @@ Finally, how did you organise your team?  I.e.\ what was each member's role and 
 \begin{center}
 	\begin{tabular}{ | c | p{8cm} | c | } \hline
 		 \bf{Team Member} & \bf{Role} & \% \\ \hline
-		Hubert baran,  & Robot coder & 33.3\ldots \\ \hline
+		Hubert baran, 170164182 & Robot coder & 33.3\ldots \\ \hline
 		Jose Alves, 170163532 & Report & 33.3\ldots \\ \hline
-		Jihan Shi,  & Robot coder & 33.3\ldots \\ \hline
+		Jinhan Shi, 170205245 & Robot coder & 33.3\ldots \\ \hline
 	\end{tabular}
 \end{center}
 
